@@ -29,17 +29,17 @@ export const resolvers = {
       prisma.discountEvent.findMany({
         include: { products: true, categories: true },
       }),
-    category: async (_: any, { id }: { id: number }) =>
+    category: async (_: any, { id }: { id: string }) =>
       prisma.category.findUnique({
         where: { id },
         include: { products: true, discountEvents: true },
       }),
-    product: async (_: any, { id }: { id: number }) =>
+    product: async (_: any, { id }: { id: string }) =>
       prisma.product.findUnique({
         where: { id },
         include: { category: true, discountEvents: true },
       }),
-    discountEvent: async (_: any, { id }: { id: number }) =>
+    discountEvent: async (_: any, { id }: { id: string }) =>
       prisma.discountEvent.findUnique({
         where: { id },
         include: { products: true, categories: true },
@@ -86,10 +86,10 @@ export const resolvers = {
           startDate: new Date(startDate),
           endDate: new Date(endDate),
           products: {
-            connect: productIds.map((id: number) => ({ id })),
+            connect: productIds.map((id: string) => ({ id })),
           },
           categories: {
-            connect: categoryIds.map((id: number) => ({ id })),
+            connect: categoryIds.map((id: string) => ({ id })),
           },
         },
       });
