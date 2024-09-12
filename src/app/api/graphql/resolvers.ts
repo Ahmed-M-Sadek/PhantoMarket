@@ -1,9 +1,21 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import { getServerSession, Session } from "next-auth";
 
 const prisma = new PrismaClient();
 
 export const resolvers = {
   Query: {
+    me: async (_: any, __: any, { req }: { req: any }) => {
+      const session: Session | null = await getServerSession(req);
+      if (!session) {
+        throw new Error("Not authenticated");
+      }
+      const user = await prisma.user.findUnique({
+        where: { email: session.user?.email! },
+      });
+      return user;
+    },
     users: async () => prisma.user.findMany(),
     categories: async () =>
       prisma.category.findMany({
@@ -43,8 +55,9 @@ export const resolvers = {
         imageUrl,
       }: { email: string; name: string; password: string; imageUrl: string }
     ) => {
+      const hashedPassword = bcrypt.hashSync(password, 12);
       return prisma.user.create({
-        data: { email, name, password, imageUrl },
+        data: { email, name, password: hashedPassword, imageUrl },
       });
     },
     createCategory: async (

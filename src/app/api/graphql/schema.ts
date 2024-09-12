@@ -40,6 +40,7 @@ export const typeDefs = gql`
   }
 
   type Query {
+    me: User
     users: [User!]!
     categories: [Category!]!
     products: [Product!]!
